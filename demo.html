@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ZeroStructureMask · System Documentation</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Barlow+Condensed:wght@200;400;700&display=swap" rel="stylesheet"/>
+
+<!-- React + Babel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+<style>
+/* ── Reset ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Variables ───────────────────────────────────────────────────────────── */
+:root {
+  --bg:       #010102;
+  --bg1:      #05050f;
+  --bg2:      #0a0a18;
+  --bg3:      #0d0d20;
+  --amber:    #ff8800;
+  --amberDim: rgba(255,136,0,0.55);
+  --amberFaint:rgba(255,136,0,0.12);
+  --blue:     rgba(120,160,255,0.6);
+  --blueFaint: rgba(80,110,220,0.12);
+  --purple:   rgba(140,80,255,0.6);
+  --text:     rgba(180,210,255,0.75);
+  --textDim:  rgba(100,130,190,0.5);
+  --textFaint:rgba(60,80,130,0.4);
+  --mono: 'Share Tech Mono', monospace;
+  --display: 'Barlow Condensed', sans-serif;
+  --body: 'Rajdhani', sans-serif;
+  --border: rgba(40,55,140,0.3);
+  --borderAmber: rgba(255,136,0,0.25);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Scan-line overlay ────────────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,30,0.03) 2px,
+    rgba(0,0,30,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+header {
+  position: relative;
+  padding: 72px 8vw 56px;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 120%, rgba(255,136,0,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 50%, rgba(80,80,200,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.header-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--amberDim);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.header-label::before {
+  content: '';
+  display: block; width: 32px; height: 1px;
+  background: var(--amber);
+}
+
+h1 {
+  font-family: var(--display);
+  font-size: clamp(52px, 9vw, 110px);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -1px;
+  color: rgba(200,220,255,0.95);
+  margin-bottom: 24px;
+}
+h1 em {
+  color: var(--amber);
+  font-style: normal;
+}
+
+.header-sub {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--textDim);
+  max-width: 560px;
+  line-height: 2;
+}
+
+.header-tags {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 28px;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  color: var(--textDim);
+  background: var(--bg1);
+}
+.tag-amber {
+  border-color: var(--borderAmber);
+  color: var(--amberDim);
+  background: var(--amberFaint);
+}
+
+/* ── Nav ──────────────────────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(1,1,2,0.97);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0;
+  padding: 0 8vw;
+  backdrop-filter: blur(8px);
+}
+nav a {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: var(--textFaint);
+  text-decoration: none;
+  padding: 14px 16px;
+  border-right: 1px solid var(--border);
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+nav a:first-child { border-left: 1px solid var(--border); }
+nav a:hover { color: var(--amber); background: var(--amberFaint); }
+.nav-seed {
+  margin-left: auto;
+  font-family: var(--mono); font-size: 8px;
+  letter-spacing: 1.5px; color: var(--textFaint);
+  padding: 14px 0;
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────────── */
+section {
+  padding: 72px 8vw;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 4px;
+  color: var(--amberDim);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+h2 {
+  font-family: var(--display);
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.05;
+  color: rgba(200,220,255,0.9);
+  margin-bottom: 24px;
+}
+h2 em { color: var(--amber); font-style: normal; }
+
+p {
+  font-family: var(--body);
+  font-size: 15px;
+  color: var(--text);
+  max-width: 680px;
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+
+/* ── Interactive Demo Section ─────────────────────────────────────────────── */
+#demo {
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+}
+.demo-header {
+  padding: 40px 8vw 24px;
+}
+.demo-wrap {
+  height: 520px;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+.demo-instructions {
+  position: absolute;
+  top: 0; right: 0;
+  width: 220px;
+  background: rgba(1,1,2,0.9);
+  border-left: 1px solid var(--border);
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+  z-index: 10;
+}
+.demo-instructions h4 {
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 3px;
+  color: var(--amberDim);
+  margin-bottom: 16px;
+}
+.instr-item {
+  display: flex; gap: 10px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+.instr-key {
+  font-family: var(--mono);
+  font-size: 8px; letter-spacing: 1px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  color: var(--textDim);
+  background: var(--bg1);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.instr-desc {
+  font-family: var(--body);
+  font-size: 11px; line-height: 1.5;
+  color: var(--textDim);
+}
+.instr-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+
+/* ── Two-col layout ───────────────────────────────────────────────────────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+@media (max-width: 800px) { .two-col { grid-template-columns: 1fr; gap: 32px; } }
+
+/* ── Concept cards ────────────────────────────────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1px;
+  border: 1px solid var(--border);
+  margin-top: 40px;
+}
+.card {
+  background: var(--bg1);
+  padding: 28px 24px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+  position: relative; overflow: hidden;
+}
+.card:hover { background: var(--bg2); }
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background 0.2s;
+}
+.card:hover::before { background: var(--amber); }
+
+.card-icon {
+  font-family: var(--mono);
+  font-size: 22px;
+  color: var(--amber);
+  margin-bottom: 14px;
+  opacity: 0.85;
+}
+.card-title {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 2.5px;
+  color: var(--amberDim);
+  margin-bottom: 10px;
+}
+.card-body {
+  font-family: var(--body);
+  font-size: 13px; line-height: 1.65;
+  color: var(--textDim);
+  max-width: none;
+}
+
+/* ── Code blocks ──────────────────────────────────────────────────────────── */
+.code-wrap {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  overflow: hidden;
+  margin: 24px 0;
+}
+.code-title {
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--amberDim);
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,136,0,0.04);
+}
+pre {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 20px;
+  overflow-x: auto;
+  color: rgba(160,190,240,0.8);
+}
+.kw  { color: rgba(120,160,255,0.9); }   /* keywords */
+.fn  { color: rgba(255,210,100,0.9); }   /* functions */
+.cm  { color: rgba(80,110,160,0.55); }   /* comments */
+.str { color: rgba(130,220,130,0.8); }   /* strings */
+.num { color: rgba(220,160,100,0.85); }  /* numbers */
+.amb { color: rgba(255,136,0,0.9); }     /* amber accents */
+
+/* ── Algorithm diagram ────────────────────────────────────────────────────── */
+.algo-diagram {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 2;
+  color: var(--textDim);
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  padding: 24px 28px;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 24px 0;
+}
+.algo-diagram .a-amber { color: var(--amber); }
+.algo-diagram .a-blue  { color: rgba(120,160,255,0.8); }
+.algo-diagram .a-green { color: rgba(80,220,120,0.7); }
+.algo-diagram .a-dim   { color: rgba(60,80,120,0.45); }
+
+/* ── Cell map visualisation ───────────────────────────────────────────────── */
+.cell-map {
+  display: inline-grid;
+  gap: 2px;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin: 24px 0;
+}
+.cell-map-row { display: flex; gap: 2px; }
+.cm-cell {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0;
+  border: 1px solid transparent;
+  position: relative;
+}
+.cm-normal {
+  background: #1a1e35;
+  border-color: #0d1020;
+  color: rgba(80,100,160,0.5);
+}
+.cm-pocket {
+  background: #0a0510;
+  border-color: #3a1060;
+  color: rgba(100,30,180,0.4);
+}
+.cm-boundary {
+  background: #1a0830;
+  border-color: #5a20a0;
+  color: rgba(160,80,220,0.55);
+}
+.cm-anchor {
+  background: #1a0800;
+  border-color: #ff8800;
+  color: #ff8800;
+  box-shadow: 0 0 8px rgba(255,136,0,0.3);
+}
+
+/* ── Steps ────────────────────────────────────────────────────────────────── */
+.steps {
+  counter-reset: steps;
+  margin-top: 32px;
+}
+.step {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 24px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+  counter-increment: steps;
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: 2px;
+  color: var(--amberDim);
+  padding-top: 4px;
+}
+.step-num::before { content: counter(steps, decimal-leading-zero); }
+.step-body h3 {
+  font-family: var(--display);
+  font-size: 22px; font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(200,220,255,0.88);
+  margin-bottom: 8px;
+}
+.step-body p {
+  font-size: 13px;
+  color: var(--textDim);
+  margin-bottom: 0;
+  max-width: 560px;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+footer {
+  padding: 40px 8vw;
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  border-top: 1px solid var(--border);
+}
+.footer-left {
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--textFaint);
+  line-height: 2.2;
+}
+.footer-right {
+  font-family: var(--mono);
+  font-size: 8px; letter-spacing: 1.5px;
+  color: var(--textFaint);
+  text-align: right;
+  line-height: 2;
+}
+
+/* ── Glitch animation for header accent ──────────────────────────────────── */
+@keyframes pulse-amber {
+  0%,100% { opacity: 0.6; }
+  50%      { opacity: 1.0; }
+}
+.pulse { animation: pulse-amber 2.4s ease-in-out infinite; }
+
+@keyframes scan {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* ── Responsive tweaks ────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  header { padding: 48px 6vw 40px; }
+  section { padding: 48px 6vw; }
+  .demo-instructions { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<header>
+  <div class="header-label">ZEROFAMILY · STRUCTURE MASK SUBSYSTEM</div>
+  <h1>Zero<br/><em>Structure</em><br/>Mask</h1>
+  <p class="header-sub">
+    Deterministic void-pocket system for infinite 3D procedural worlds.<br/>
+    O(1) per cell. No stored world state. Zero bytes describe infinity.
+  </p>
+  <div class="header-tags">
+    <span class="tag tag-amber">ZEROBYTES</span>
+    <span class="tag tag-amber">ZERO-FIELD</span>
+    <span class="tag">KOCH MEGASTRUCTURE V3</span>
+    <span class="tag">GLB/GLTF READY</span>
+    <span class="tag">WORLD SEED 0x4B4F4348</span>
+  </div>
+</header>
+
+<!-- ── Nav ────────────────────────────────────────────────────────────────── -->
+<nav>
+  <a href="#what">WHAT</a>
+  <a href="#demo">DEMO</a>
+  <a href="#algorithm">ALGORITHM</a>
+  <a href="#integration">INTEGRATION</a>
+  <a href="#format">DATA FORMAT</a>
+  <span class="nav-seed">SEED · 0x4B4F4348</span>
+</nav>
+
+<!-- ── WHAT ───────────────────────────────────────────────────────────────── -->
+<section id="what">
+  <div class="section-label">01 · OVERVIEW</div>
+  <h2>Punch <em>holes</em><br/>into infinity</h2>
+
+  <div class="two-col">
+    <div>
+      <p>
+        The Koch Megastructure generates an infinite interior world from a single seed —
+        no stored maps, no chunk files. But to place a large Point of Interest (a city gate,
+        a reactor core, a transit hub), you need empty space that the topology won't
+        fill in.
+      </p>
+      <p>
+        <strong style="color:rgba(200,220,255,0.9)">ZeroStructureMask</strong> punches void
+        pockets into the megastructure at registered coordinates. Any cell within the pocket
+        radius suppresses its Koch panel generation. The anchor cell at the centre renders a
+        diamond BSP placeholder — or a real <code>.glb</code> / <code>.gltf</code> model
+        when one is provided.
+      </p>
+      <p>
+        The system is a pure drop-in: it wraps <code>buildCellMesh</code> with an early-exit
+        guard and adds a second draw pass for placeholders. No existing functions are modified.
+      </p>
+    </div>
+    <div>
+      <!-- Static cell map diagram -->
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--amberDim);margin-bottom:12px;">
+        TOP-DOWN Y=0 SLICE · 9×9 VIEW
+      </div>
+      <div class="cell-map">
+        <div class="cell-map-row">
+          <div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div>
+        </div>
+        <div class="cell-map-row">
+          <div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div>
+        </div>
+        <div class="cell-map-row">
+          <div class="cm-cell cm-normal">█</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-pocket">░</div><div class="cm-cell cm-pocket">░</div><div class="cm-cell cm-pocket">░</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div>
+        </div>
+        <div class="cell-map-row">
+          <div class="cm-cell cm-normal">█</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-pocket">░</div><div class="cm-cell cm-anchor" style="font-size:14px">◆</div><div class="cm-cell cm-pocket">░</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div>
+        </div>
+        <div class="cell-map-row">
+          <div class="cm-cell cm-normal">█</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-pocket">░</div><div class="cm-cell cm-pocket">░</div><div class="cm-cell cm-pocket">░</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div>
+        </div>
+        <div class="cell-map-row">
+          <div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-boundary">▒</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div>
+        </div>
+        <div class="cell-map-row">
+          <div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div><div class="cm-cell cm-normal">█</div>
+        </div>
+      </div>
+      <!-- Legend -->
+      <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--textDim)">
+          <span style="width:10px;height:10px;background:#1a1e35;border:1px solid #0d1020;display:inline-block"></span>KOCH SOLID
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--textDim)">
+          <span style="width:10px;height:10px;background:#0a0510;border:1px solid #3a1060;display:inline-block"></span>VOID POCKET
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--textDim)">
+          <span style="width:10px;height:10px;background:#1a0830;border:1px solid #5a20a0;display:inline-block"></span>BOUNDARY
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:rgba(255,136,0,0.6)">
+          <span style="width:10px;height:10px;background:#1a0800;border:1px solid #ff8800;display:inline-block"></span>ANCHOR
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">◈</div>
+      <div class="card-title">O(1) PER CELL</div>
+      <div class="card-body">Any cell coordinate returns its mask state in constant time. No spatial queries, no quadtrees, no stored world maps.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">◆</div>
+      <div class="card-title">ANCHOR PLACEHOLDER</div>
+      <div class="card-body">The anchor cell renders a large octahedron BSP diamond in amber. Replaced by a real .glb model when provided — the void pocket remains active either way.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">▒</div>
+      <div class="card-title">BOUNDARY BLEND</div>
+      <div class="card-body">Cells at the pocket edge receive a smoothstep displacement ramp — Koch panels fade out gracefully rather than cutting hard at a voxel boundary.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">∞</div>
+      <div class="card-title">INFINITE SCALE</div>
+      <div class="card-body">Sites are just integers in an array. Anchor positions can be anywhere in the infinite 3D lattice. The system is as unbounded as the world itself.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DEMO ────────────────────────────────────────────────────────────────── -->
+<section id="demo" style="padding:0;">
+  <div class="demo-header">
+    <div class="section-label">02 · INTERACTIVE DEMO</div>
+    <h2>Place sites,<br/>watch the <em>void open</em></h2>
+    <p style="margin-bottom:0;">
+      Left-click to place a Structure Site. Click an existing anchor to remove it.
+      Drag right-click to pan. Scroll to zoom. Use the Y Slice slider to travel through layers.
+    </p>
+  </div>
+  <div class="demo-wrap">
+    <div id="zsm-demo" style="position:absolute;inset:0;right:220px;"></div>
+    <div class="demo-instructions">
+      <h4>CONTROLS</h4>
+      <div class="instr-item">
+        <span class="instr-key">LMB</span>
+        <span class="instr-desc">Place structure site at cell. Click existing anchor to remove.</span>
+      </div>
+      <div class="instr-item">
+        <span class="instr-key">RMB DRAG</span>
+        <span class="instr-desc">Pan the view through the infinite grid.</span>
+      </div>
+      <div class="instr-item">
+        <span class="instr-key">SCROLL</span>
+        <span class="instr-desc">Zoom in/out. Zoom in to see boundary blend zones and labels.</span>
+      </div>
+      <div class="instr-sep"></div>
+      <h4>SLIDERS</h4>
+      <div class="instr-item">
+        <span class="instr-key">Y SLICE</span>
+        <span class="instr-desc">Move through the Y axis of the 3D lattice. Pocket disappears outside radiusY.</span>
+      </div>
+      <div class="instr-item">
+        <span class="instr-key">RADIUS XZ</span>
+        <span class="instr-desc">Horizontal void half-extent in cells. Applied to new sites placed after changing.</span>
+      </div>
+      <div class="instr-item">
+        <span class="instr-key">RADIUS Y</span>
+        <span class="instr-desc">Vertical void half-extent. Set to 0 for a single-layer mask.</span>
+      </div>
+      <div class="instr-sep"></div>
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:rgba(255,136,0,0.45);line-height:2;">
+        ◈ — ANCHOR CELL<br/>
+        ░ — VOID POCKET<br/>
+        ▒ — BLEND BOUNDARY<br/>
+        █ — KOCH SOLID
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ALGORITHM ───────────────────────────────────────────────────────────── -->
+<section id="algorithm">
+  <div class="section-label">03 · ALGORITHM</div>
+  <h2>How the <em>mask query</em><br/>works</h2>
+
+  <div class="two-col">
+    <div>
+      <p>
+        For every cell coordinate <code>(cx, cy, cz)</code> queried during the Koch mesh build,
+        the mask runs a linear scan over <code>STRUCTURE_SITES[]</code>. For each site,
+        axis-aligned Chebyshev distance is computed and compared to the site's radius.
+      </p>
+      <p>
+        Three outcomes are possible: the cell is <span style="color:rgba(200,220,255,0.9)">normal</span>
+        (no mask, build Koch geometry as usual), a <span style="color:rgba(140,60,220,0.8)">pocket cell</span>
+        (fully suppressed, return empty mesh), or a <span style="color:rgba(255,136,0,0.85)">boundary cell</span>
+        (Koch panels scaled down by a smoothstep ramp to blend the edge).
+      </p>
+      <p>
+        The anchor cell — at distance 0 from the site — is always empty and triggers a
+        placeholder diamond draw in a separate render pass.
+      </p>
+    </div>
+    <div>
+      <div class="code-wrap">
+        <div class="code-title">MASK QUERY · querySiteMask(cx, cy, cz)</div>
+        <pre><span class="kw">for</span> (site <span class="kw">of</span> STRUCTURE_SITES) {
+  dx = |cx - site.cx|
+  dy = |cy - site.cy|
+  dz = |cz - site.cz|
+
+  <span class="kw">if</span> (dx ≤ radiusX <span class="kw">AND</span>
+      dy ≤ radiusY <span class="kw">AND</span>
+      dz ≤ radiusZ) {
+
+    <span class="cm">// Chebyshev dist → smoothstep blend</span>
+    blend = max(dx/rx, dy/ry, dz/rz)
+    t     = smoothstep(blend)
+
+    <span class="kw">return</span> {
+      masked: <span class="amb">true</span>,
+      isAnchor: (dx=0 <span class="kw">AND</span> dy=0 <span class="kw">AND</span> dz=0),
+      blend: t
+    }
+  }
+}
+<span class="kw">return</span> { masked: <span class="str">false</span> }</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="algo-diagram"><span class="a-dim">buildCellMesh(cx, cy, cz, lod)</span>
+  │
+  ├─ <span class="a-amber">querySiteMask(cx, cy, cz)</span>
+  │    │
+  │    ├─ masked = false  <span class="a-dim">────────────────────</span> <span class="a-green">► build Koch geometry normally</span>
+  │    │
+  │    ├─ isAnchor = true <span class="a-dim">────────────────────</span> <span class="a-amber">► return Float32Array(0)</span>
+  │    │                                           <span class="a-amber">  placeholder drawn separately</span>
+  │    │
+  │    └─ pocket / boundary cell
+  │         │
+  │         ├─ blend &lt; 0.85 <span class="a-dim">──────────────────</span> <span class="a-blue">► return Float32Array(0)  [void]</span>
+  │         │
+  │         └─ blend 0.85–1.0 <span class="a-dim">──────────────</span> <span class="a-blue">► build Koch, scale kochD() by blend</span>
+  │                                              <span class="a-blue">  panels fade to 0 at boundary</span>
+  │
+  └─ Upload to GPU cache, draw arrays
+
+<span class="a-dim">  ─ separate pass ─────────────────────────────────────────────────────────</span>
+
+  <span class="a-amber">renderSiteLayer()</span>
+  │
+  └─ for each site in STRUCTURE_SITES:
+       ├─ distance cull  (skip if outside draw range)
+       ├─ modelLoaded?  → skip placeholder, draw GLB instead
+       └─ <span class="a-amber">draw octahedron</span> (amber rim shader, pulse glow, quartic fog)</div>
+</section>
+
+<!-- ── INTEGRATION ─────────────────────────────────────────────────────────── -->
+<section id="integration">
+  <div class="section-label">04 · INTEGRATION</div>
+  <h2>Five points,<br/><em>no rewrites</em></h2>
+  <p>
+    ZeroStructureMask is inserted at five precise locations in
+    <code>KochMegastructureV3.jsx</code>. No existing function bodies
+    need to be altered — only wrapped or extended.
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-body">
+        <h3>STRUCTURE_SITES Registry</h3>
+        <p>Insert the site array and <code>querySiteMask()</code> immediately after the existing constants block (<code>BIOME_PROPS</code>). Each site specifies its cell coordinate, axis radii, an optional model URL, and a display label.</p>
+        <div class="code-wrap" style="margin-top:14px;">
+          <div class="code-title">SITE SCHEMA</div>
+          <pre>{ <span class="amb">id</span>: <span class="num">0</span>, <span class="amb">cx</span>: <span class="num">4</span>, <span class="amb">cy</span>: <span class="num">0</span>, <span class="amb">cz</span>: <span class="num">4</span>,
+  <span class="amb">radiusX</span>: <span class="num">2</span>, <span class="amb">radiusY</span>: <span class="num">1</span>, <span class="amb">radiusZ</span>: <span class="num">2</span>,
+  <span class="amb">modelUrl</span>: <span class="str">null</span>,  <span class="cm">// or '/models/nexus.glb'</span>
+  <span class="amb">label</span>: <span class="str">'NEXUS GATE ALPHA'</span> }</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-body">
+        <h3>buildCellMesh Guard</h3>
+        <p>Add an early-exit block at the very top of <code>buildCellMesh</code>. Anchors and deep pocket cells return <code>Float32Array(0)</code> immediately. Boundary cells derive a <code>_maskScale</code> value that is multiplied against every <code>kochD()</code> displacement call later in the function.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-body">
+        <h3>buildAnchorMesh + Shader</h3>
+        <p>A new function builds a flat-shaded regular octahedron using the existing <code>STRIDE</code>/<code>CELL</code> constants. A second minimal WebGL shader (<code>ANCHOR_VS</code> / <code>ANCHOR_FS</code>) renders it with amber rim lighting and a slow pulse uniform. Buffers are cached in <code>anchorCache</code> keyed by site ID.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-body">
+        <h3>Frame Loop — Second Draw Pass</h3>
+        <p>After the Koch cell draw loop, a short loop over <code>STRUCTURE_SITES</code> distance-culls each site and draws its anchor buffer. The main Koch shader is restored afterwards with <code>gl.useProgram(prog)</code>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-body">
+        <h3>HUD + Cleanup</h3>
+        <p>Two new HUD lines show total site count and nearest site label. When the camera is inside a mask zone, the biome line flips to amber and displays the site label. Anchor buffers are deleted in the existing teardown return.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DATA FORMAT ─────────────────────────────────────────────────────────── -->
+<section id="format">
+  <div class="section-label">05 · DATA FORMAT</div>
+  <h2>Site registry<br/><em>reference</em></h2>
+
+  <div class="two-col" style="align-items:start;">
+    <div>
+      <p>
+        The full site registry is a plain JavaScript array — no database, no binary format,
+        no file IO. It lives as a constant in the component body and is evaluated once at mount.
+      </p>
+      <p>
+        Sites can be authored by hand, generated procedurally from a secondary ZeroBytes pass,
+        or exported from the ProceduralTerrain Structure Layer editor and ingested here.
+      </p>
+
+      <div style="margin-top:24px;">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--amberDim);margin-bottom:16px;">FIELD REFERENCE</div>
+        <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);">
+              <th style="text-align:left;padding:8px 12px;color:var(--textDim);font-weight:normal;letter-spacing:2px;">FIELD</th>
+              <th style="text-align:left;padding:8px 12px;color:var(--textDim);font-weight:normal;letter-spacing:2px;">TYPE</th>
+              <th style="text-align:left;padding:8px 12px;color:var(--textDim);font-weight:normal;letter-spacing:2px;">PURPOSE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(20,25,60,0.6);">
+              <td style="padding:8px 12px;color:var(--amber);">id</td>
+              <td style="padding:8px 12px;color:rgba(120,160,255,0.7);">number</td>
+              <td style="padding:8px 12px;color:var(--textDim);">Unique integer, used as GL buffer cache key</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(20,25,60,0.6);">
+              <td style="padding:8px 12px;color:var(--amber);">cx, cy, cz</td>
+              <td style="padding:8px 12px;color:rgba(120,160,255,0.7);">number</td>
+              <td style="padding:8px 12px;color:var(--textDim);">Anchor cell coordinate (integer, any range)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(20,25,60,0.6);">
+              <td style="padding:8px 12px;color:var(--amber);">radiusX/Y/Z</td>
+              <td style="padding:8px 12px;color:rgba(120,160,255,0.7);">number</td>
+              <td style="padding:8px 12px;color:var(--textDim);">Void half-extents in cells per axis</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(20,25,60,0.6);">
+              <td style="padding:8px 12px;color:var(--amber);">modelUrl</td>
+              <td style="padding:8px 12px;color:rgba(120,160,255,0.7);">string|null</td>
+              <td style="padding:8px 12px;color:var(--textDim);">Path to .glb/.gltf; null shows placeholder</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px;color:var(--amber);">label</td>
+              <td style="padding:8px 12px;color:rgba(120,160,255,0.7);">string</td>
+              <td style="padding:8px 12px;color:var(--textDim);">Display name, shown in HUD and on anchor</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="code-wrap">
+        <div class="code-title">STRUCTURE_SITES · COMPLETE EXAMPLE</div>
+        <pre><span class="kw">const</span> <span class="fn">STRUCTURE_SITES</span> = [
+  {
+    <span class="amb">id</span>: <span class="num">0</span>,
+    <span class="amb">cx</span>: <span class="num">4</span>,  <span class="amb">cy</span>: <span class="num">0</span>,  <span class="amb">cz</span>: <span class="num">4</span>,
+    <span class="amb">radiusX</span>: <span class="num">2</span>,
+    <span class="amb">radiusY</span>: <span class="num">1</span>,
+    <span class="amb">radiusZ</span>: <span class="num">2</span>,
+    <span class="amb">modelUrl</span>: <span class="str">null</span>,
+    <span class="amb">label</span>: <span class="str">'NEXUS GATE ALPHA'</span>,
+  },
+  {
+    <span class="amb">id</span>: <span class="num">1</span>,
+    <span class="amb">cx</span>: <span class="num">-6</span>, <span class="amb">cy</span>: <span class="num">1</span>,  <span class="amb">cz</span>: <span class="num">2</span>,
+    <span class="amb">radiusX</span>: <span class="num">2</span>,
+    <span class="amb">radiusY</span>: <span class="num">1</span>,
+    <span class="amb">radiusZ</span>: <span class="num">2</span>,
+    <span class="amb">modelUrl</span>: <span class="str">'/models/shard.glb'</span>,
+    <span class="amb">label</span>: <span class="str">'TRANSIT SHARD BETA'</span>,
+  },
+  {
+    <span class="amb">id</span>: <span class="num">2</span>,
+    <span class="amb">cx</span>: <span class="num">0</span>,  <span class="amb">cy</span>: <span class="num">-1</span>, <span class="amb">cz</span>: <span class="num">-8</span>,
+    <span class="amb">radiusX</span>: <span class="num">3</span>,   <span class="cm">// larger site</span>
+    <span class="amb">radiusY</span>: <span class="num">2</span>,
+    <span class="amb">radiusZ</span>: <span class="num">3</span>,
+    <span class="amb">modelUrl</span>: <span class="str">null</span>,
+    <span class="amb">label</span>: <span class="str">'CATHEDRAL VOID'</span>,
+  },
+];</pre>
+      </div>
+
+      <div style="margin-top:16px;padding:16px;background:var(--amberFaint);border:1px solid var(--borderAmber);">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--amberDim);margin-bottom:8px;">NOTE · WORLD UNITS</div>
+        <div style="font-family:var(--body);font-size:12px;color:var(--textDim);line-height:1.7;">
+          Cell coordinates are in <strong style="color:rgba(200,220,255,0.7)">cell-space</strong>, not world-space.
+          World position = <code>cx × STRIDE</code> where <code>STRIDE = CELL + GAP = 608u</code>.
+          The anchor mesh is automatically centred at <code>cx×608 + 256</code>.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ──────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-left">
+    ZERO STRUCTURE MASK<br/>
+    ZEROFAMILY · KOCH MEGASTRUCTURE V3<br/>
+    <span style="color:rgba(255,136,0,0.35)">TINS SPEC · ZeroStructureMask-TINS.md</span>
+  </div>
+  <div class="footer-right">
+    WORLD SEED · 0x4B4F4348<br/>
+    CELL 512u · GAP 96u · STRIDE 608u<br/>
+    O(1) PER CELL · ZERO STORED STATE
+  </div>
+</footer>
+
+<!-- ── React Demo Mount ─────────────────────────────────────────────────────── -->
+<script type="text/babel" data-presets="react">
+// ─── ZeroBytes hash ───────────────────────────────────────────────────────
+const h32mix = v => { v=Math.imul(v^(v>>>16),0x45d9f3b); v=Math.imul(v^(v>>>16),0x45d9f3b); return (v^(v>>>16))>>>0; };
+const posHash = (x, y, z, salt=0) => {
+  x=((x+32768)&0xffff)|0; y=((y+32768)&0xffff)|0; z=((z+32768)&0xffff)|0;
+  let s=(salt^0x9e3779b9)>>>0;
+  s=h32mix(s^x); s=h32mix(s^((y<<8)|(z>>>8)));
+  s=h32mix(s^(z&0xff)); s=h32mix(s^Math.imul(x,0x6c62272e));
+  s=h32mix(s^Math.imul(y,0x9e3779b9)); s=h32mix(s^Math.imul(z,0x517cc1b7));
+  return s>>>0;
+};
+const h2f = h => (h>>>0)/4294967296;
+
+// ─── Mask query ───────────────────────────────────────────────────────────
+const querySiteMask = (cx, cy, cz, sites) => {
+  for (let i=0; i<sites.length; i++) {
+    const s=sites[i];
+    const dx=Math.abs(cx-s.cx), dy=Math.abs(cy-s.cy), dz=Math.abs(cz-s.cz);
+    if (dx<=s.radiusX && dy<=s.radiusY && dz<=s.radiusZ) {
+      const isAnchor = dx===0 && dy===0 && dz===0;
+      const blend = Math.max(dx/(s.radiusX+0.5), dy/(s.radiusY+0.5), dz/(s.radiusZ+0.5));
+      const t = Math.max(0,Math.min(1,blend));
+      return { masked:true, isAnchor, blend: t*t*(3-2*t), site:s, siteIdx:i };
+    }
+  }
+  return { masked:false, isAnchor:false, blend:0, site:null, siteIdx:-1 };
+};
+
+// ─── Koch-style cell density field ────────────────────────────────────────
+const smstep = t => t*t*(3-2*t);
+const lat = (ix,iy,iz,s) => h2f(posHash(ix,iy,iz,s))*2-1;
+const WORLD_SEED = 0x4b4f4348;
+const coherent2 = (x,y,salt) => {
+  const ix=Math.floor(x),iy=Math.floor(y);
+  const tx=smstep(x-ix),ty=smstep(y-iy);
+  const n00=lat(ix,iy,0,salt),n10=lat(ix+1,iy,0,salt);
+  const n01=lat(ix,iy+1,0,salt),n11=lat(ix+1,iy+1,0,salt);
+  return (n00*(1-tx)+n10*tx)*(1-ty)+(n01*(1-tx)+n11*tx)*ty;
+};
+const cellDensity = (cx,cy,cz) => {
+  const wx=cx*608,wy=cy*608,wz=cz*608;
+  const macro=coherent2(wx*0.0003,wz*0.0003,WORLD_SEED+9000);
+  const meso =coherent2(wx*0.0012,wz*0.0012,WORLD_SEED+9500);
+  const field=coherent2(wx*0.0009+wy*0.0001,wz*0.0009,WORLD_SEED+1000);
+  if(macro>0.55) return 0;
+  if(macro>0.30) return meso>0.0?0.4:0;
+  return field>-0.52?Math.min(1,0.3+field*0.7):0;
+};
+
+// ─── Palette ──────────────────────────────────────────────────────────────
+const PAL = {
+  bg:'#010102', gridLine:'#0d1020',
+  void:'#010102', pocket:'#0a0510', pocketBorder:'#3a1060',
+  boundary:'#1a0830', anchor:'#ff8800', anchorBg:'#1a0800',
+  hover:'rgba(255,136,0,0.15)',
+};
+
+// ─── Demo Component ───────────────────────────────────────────────────────
+function ZeroStructureMaskDemo() {
+  const canvasRef = React.useRef(null);
+  const stateRef  = React.useRef({
+    sites:[
+      {id:0,cx:2,cy:0,cz:2,radiusX:2,radiusY:1,radiusZ:2,label:'NEXUS ALPHA'},
+      {id:1,cx:-4,cy:0,cz:-3,radiusX:2,radiusY:1,radiusZ:2,label:'SHARD BETA'},
+    ],
+    nextId:2, panX:0, panZ:0, zoom:38, sliceY:0, radiusXZ:2, radiusY:1,
+    isPanning:false, lastMX:0, lastMZ:0, hovCX:null, hovCZ:null,
+  });
+  const [ui,setUi] = React.useState({sliceY:0,radiusXZ:2,radiusY:1,siteCount:2,hovLabel:null});
+  const rafRef = React.useRef(null);
+
+  // Draw
+  const draw = React.useCallback(()=>{
+    const canvas=canvasRef.current; if(!canvas) return;
+    const ctx=canvas.getContext('2d');
+    const W=canvas.width,H=canvas.height;
+    const st=stateRef.current;
+    const {panX,panZ,zoom,sliceY,sites}=st;
+    ctx.fillStyle=PAL.bg; ctx.fillRect(0,0,W,H);
+    const halfW=W/2,halfH=H/2;
+    const minCX=Math.floor((-halfW/zoom-panX)-1);
+    const maxCX=Math.ceil((halfW/zoom-panX)+1);
+    const minCZ=Math.floor((-halfH/zoom-panZ)-1);
+    const maxCZ=Math.ceil((halfH/zoom-panZ)+1);
+
+    for(let cz=minCZ;cz<=maxCZ;cz++){
+      for(let cx=minCX;cx<=maxCX;cx++){
+        const sx=(cx+panX)*zoom+halfW, sy=(cz+panZ)*zoom+halfH, cell=zoom;
+        const mask=querySiteMask(cx,sliceY,cz,sites);
+        const dens=cellDensity(cx,sliceY,cz);
+        const isHov=cx===st.hovCX&&cz===st.hovCZ;
+        let fill,stroke,strokeW=0.5;
+
+        if(mask.masked){
+          if(mask.isAnchor){ fill=PAL.anchorBg; stroke=PAL.anchor; strokeW=1.5; }
+          else if(mask.blend<0.75){ fill=PAL.pocket; stroke=PAL.pocketBorder; }
+          else { fill=PAL.boundary; stroke='#5a20a0'; strokeW=0.8; }
+        } else if(dens>0.05){
+          const sh=Math.floor(dens*40);
+          fill=`rgb(${20+sh},${26+sh},${52+sh})`; stroke=PAL.gridLine;
+        } else { fill=PAL.void; stroke=PAL.gridLine; }
+
+        ctx.fillStyle=fill; ctx.fillRect(sx,sy,cell-1,cell-1);
+        if(isHov){ctx.fillStyle=PAL.hover;ctx.fillRect(sx,sy,cell-1,cell-1);}
+        ctx.strokeStyle=stroke; ctx.lineWidth=strokeW;
+        ctx.strokeRect(sx+.5,sy+.5,cell-2,cell-2);
+
+        if(mask.isAnchor&&zoom>=20){
+          const cx2=sx+cell/2,cy2=sy+cell/2,r=cell*0.38;
+          ctx.beginPath();
+          ctx.moveTo(cx2,cy2-r);ctx.lineTo(cx2+r,cy2);
+          ctx.lineTo(cx2,cy2+r);ctx.lineTo(cx2-r,cy2);ctx.closePath();
+          ctx.strokeStyle=PAL.anchor;ctx.lineWidth=zoom>30?1.5:1;ctx.stroke();
+          const grd=ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,r);
+          grd.addColorStop(0,'rgba(255,136,0,0.35)');grd.addColorStop(1,'rgba(255,136,0,0)');
+          ctx.fillStyle=grd;ctx.fill();
+          if(zoom>=32&&mask.site.label){
+            ctx.fillStyle='rgba(255,136,0,0.9)';
+            ctx.font=`bold ${Math.max(7,zoom*0.17)}px "Share Tech Mono",monospace`;
+            ctx.textAlign='center';
+            ctx.fillText(mask.site.label,cx2,cy2+r+zoom*0.18);
+          }
+        }
+        if(mask.masked&&!mask.isAnchor&&mask.blend<0.7&&zoom>=24){
+          ctx.strokeStyle='rgba(100,30,180,0.2)';ctx.lineWidth=0.5;
+          const m=cell*0.25;
+          ctx.beginPath();ctx.moveTo(sx+m,sy+m);ctx.lineTo(sx+cell-m-1,sy+cell-m-1);
+          ctx.moveTo(sx+cell-m-1,sy+m);ctx.lineTo(sx+m,sy+cell-m-1);ctx.stroke();
+        }
+      }
+    }
+    // Axes
+    const ox=(0+panX)*zoom+halfW,oz=(0+panZ)*zoom+halfH;
+    ctx.strokeStyle='rgba(80,120,200,0.2)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,oz);ctx.lineTo(W,oz);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(80,100,160,0.35)';ctx.font='8px "Share Tech Mono"';
+    ctx.textAlign='left';ctx.fillText('0,0',ox+3,oz-3);
+  },[]);
+
+  React.useEffect(()=>{
+    const loop=(ts)=>{ rafRef.current=requestAnimationFrame(loop); draw(); };
+    rafRef.current=requestAnimationFrame(loop);
+    return()=>cancelAnimationFrame(rafRef.current);
+  },[draw]);
+
+  React.useEffect(()=>{
+    const canvas=canvasRef.current;
+    const ro=new ResizeObserver(()=>{canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;});
+    ro.observe(canvas);canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;
+    return()=>ro.disconnect();
+  },[]);
+
+  const screenToCell=(clientX,clientY)=>{
+    const canvas=canvasRef.current,rect=canvas.getBoundingClientRect(),st=stateRef.current;
+    const mx=clientX-rect.left,my=clientY-rect.top;
+    return {cx:Math.floor((mx-canvas.width/2)/st.zoom-st.panX),cz:Math.floor((my-canvas.height/2)/st.zoom-st.panZ)};
+  };
+
+  const onMouseDown=e=>{
+    const st=stateRef.current;
+    if(e.button===2||e.button===1){st.isPanning=true;st.lastMX=e.clientX;st.lastMZ=e.clientY;e.preventDefault();}
+    else if(e.button===0){
+      const {cx,cz}=screenToCell(e.clientX,e.clientY);
+      const cy=st.sliceY;
+      const idx=st.sites.findIndex(s=>s.cx===cx&&s.cy===cy&&s.cz===cz);
+      if(idx>=0){st.sites.splice(idx,1);}
+      else{st.sites.push({id:st.nextId++,cx,cy,cz,radiusX:st.radiusXZ,radiusY:st.radiusY,radiusZ:st.radiusXZ,label:`SITE #${st.nextId-1}`});}
+      setUi(u=>({...u,siteCount:st.sites.length}));
+    }
+  };
+  const onMouseMove=e=>{
+    const st=stateRef.current;
+    if(st.isPanning){st.panX+=(e.clientX-st.lastMX)/st.zoom;st.panZ+=(e.clientY-st.lastMZ)/st.zoom;st.lastMX=e.clientX;st.lastMZ=e.clientY;}
+    const {cx,cz}=screenToCell(e.clientX,e.clientY);
+    st.hovCX=cx;st.hovCZ=cz;
+    const mask=querySiteMask(cx,st.sliceY,cz,st.sites);
+    const label=mask.masked?(mask.isAnchor?`ANCHOR · ${mask.site.label}`:`VOID POCKET · blend ${mask.blend.toFixed(2)}`):`CELL ${cx},${st.sliceY},${cz}`;
+    setUi(u=>({...u,hovLabel:label}));
+  };
+  const onMouseUp=()=>{stateRef.current.isPanning=false;};
+  const onWheel=e=>{e.preventDefault();const st=stateRef.current;st.zoom=Math.max(8,Math.min(96,st.zoom*(e.deltaY>0?0.88:1.14)));};
+
+  const setSliceY=v=>{stateRef.current.sliceY=v;setUi(u=>({...u,sliceY:v}));};
+  const setRadiusXZ=v=>{stateRef.current.radiusXZ=v;setUi(u=>({...u,radiusXZ:v}));};
+  const setRadiusY=v=>{stateRef.current.radiusY=v;setUi(u=>({...u,radiusY:v}));};
+
+  const mono={fontFamily:"'Share Tech Mono',monospace"};
+  const slBase={accentColor:'#ff8800',cursor:'pointer',width:84};
+  const btnBase={background:'transparent',border:'1px solid rgba(80,100,180,0.35)',color:'rgba(140,170,220,0.6)',padding:'3px 10px',cursor:'pointer',fontSize:9,letterSpacing:2,...mono,};
+  const barBase={display:'flex',alignItems:'center',gap:14,padding:'7px 14px',background:'rgba(3,3,14,0.98)',flexShrink:0,flexWrap:'wrap'};
+
+  return(
+    <div style={{background:'#010102',color:'rgba(180,210,255,0.7)',...mono,width:'100%',height:'100%',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+      <div style={{...barBase,borderBottom:'1px solid rgba(40,50,120,0.35)'}}>
+        <span style={{fontSize:9,letterSpacing:3,color:'rgba(255,136,0,0.4)',flexShrink:0}}>ZSM·DEMO</span>
+        {[
+          {label:'Y SLICE',val:ui.sliceY,min:-4,max:4,step:1,set:setSliceY,fmt:v=>(v>=0?'+':'')+v},
+          {label:'RADIUS XZ',val:ui.radiusXZ,min:1,max:5,step:1,set:setRadiusXZ,fmt:v=>v},
+          {label:'RADIUS Y',val:ui.radiusY,min:0,max:4,step:1,set:setRadiusY,fmt:v=>v},
+        ].map(s=>(
+          <div key={s.label} style={{display:'flex',alignItems:'center',gap:6}}>
+            <span style={{fontSize:8,letterSpacing:2,color:'rgba(100,130,180,0.55)'}}>{s.label}</span>
+            <input type="range" min={s.min} max={s.max} step={s.step} value={s.val} style={slBase} onChange={e=>s.set(+e.target.value)}/>
+            <span style={{fontSize:10,color:'rgba(200,220,255,0.8)',minWidth:20,textAlign:'center'}}>{s.fmt(s.val)}</span>
+          </div>
+        ))}
+        <button style={btnBase} onClick={()=>{const st=stateRef.current;st.panX=0;st.panZ=0;st.zoom=38;}}>RESET</button>
+        <button style={{...btnBase,borderColor:'rgba(180,60,60,0.35)',color:'rgba(220,100,100,0.55)'}} onClick={()=>{stateRef.current.sites=[];setUi(u=>({...u,siteCount:0}));}}>CLEAR</button>
+        <div style={{display:'flex',alignItems:'center',gap:6,marginLeft:'auto'}}>
+          <span style={{fontSize:8,letterSpacing:2,color:'rgba(100,130,180,0.5)'}}>SITES</span>
+          <span style={{fontSize:10,color:'rgba(255,136,0,0.8)',minWidth:22,textAlign:'center'}}>{ui.siteCount}</span>
+        </div>
+      </div>
+      <div style={{flex:1,position:'relative',overflow:'hidden'}}>
+        <canvas ref={canvasRef} style={{display:'block',width:'100%',height:'100%',cursor:'crosshair'}}
+          onMouseDown={onMouseDown} onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp} onMouseLeave={onMouseUp}
+          onWheel={onWheel} onContextMenu={e=>e.preventDefault()}/>
+      </div>
+      <div style={{...barBase,borderTop:'1px solid rgba(40,50,120,0.3)',padding:'5px 14px'}}>
+        <span style={{fontSize:8,letterSpacing:1.5,color:'rgba(60,80,140,0.45)'}}>LMB PLACE/REMOVE · RMB PAN · SCROLL ZOOM</span>
+        <span style={{fontSize:9,letterSpacing:1.5,color:'rgba(255,136,0,0.55)',marginLeft:'auto',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',maxWidth:320}}>{ui.hovLabel||'—'}</span>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('zsm-demo'));
+root.render(React.createElement(ZeroStructureMaskDemo));
+</script>
+</body>
+</html>
